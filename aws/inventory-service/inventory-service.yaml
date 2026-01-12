@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: inventory-service-config
+  namespace: inventory
+data:
+  application.properties: |
+    spring.application.name=inventory-service
+
+    # Custom config
+    application.topic.order=order-events
+    application.topic.inventory=inventory-events
+    application.topic.payment=payment-events
+    application.batch-size=10
+    
+    # postgres configuration
+    spring.datasource.driver-class-name=org.postgresql.Driver
+    spring.datasource.username=postgres
+
+    # Spring JPA
+    spring.jpa.hibernate.ddl-auto=update
+    spring.jpa.show-sql=false
+    spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+
+    # Kafka server
+    spring.kafka.bootstrap-servers=kafka-0.kafka-service.kafka.svc.cluster.local:9092
+
+    # Kafka producer
+    spring.kafka.producer.key-serializer=org.apache.kafka.common.serialization.StringSerializer
+    spring.kafka.producer.value-serializer=org.springframework.kafka.support.serializer.JacksonJsonSerializer
+
+    # Kafka consumer
+    spring.kafka.consumer.group-id=inventory-group
+    spring.kafka.consumer.auto-offset-reset=earliest
+    spring.kafka.consumer.key-deserializer=org.apache.kafka.common.serialization.StringDeserializer
+    spring.kafka.consumer.value-deserializer=org.springframework.kafka.support.serializer.JacksonJsonDeserializer
+    spring.kafka.consumer.properties.spring.json.trusted.packages=*
+
+    # Jackson
+    spring.jackson.generator.write-bigdecimal-as-plain=true
+    spring.jackson.deserialization.USE_BIG_DECIMAL_FOR_FLOATS=true
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory-service
+  namespace: inventory
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: inventory-service
+  template:
+    metadata:
+      labels:
+        app: inventory-service
+    spec:
+      containers:
+      - name: inventory-service-container
+        image: antony2907/inventory-service:1.0.1
+        ports:
+        - containerPort: 8080
+        env:
+        - name: TZ
+          value: "Asia/Ho_Chi_Minh"
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:postgresql://postgres-0.postgres-service.inventory.svc.cluster.local:5432/inventory_db
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: inventory-db-secret
+              key: password
+        volumeMounts:
+        # Mount the ConfigMap as a file in /config
+        - name: config-volume
+          mountPath: /app/config
+          readOnly: true
+      volumes:
+      - name: config-volume
+        configMap:
+          name: inventory-service-config

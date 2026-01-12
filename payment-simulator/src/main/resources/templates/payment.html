@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment</title>
+</head>
+<body>
+    <h1 th:text="'Giả lập cho đơn: ' + ${transactionId}"></h1>
+    <p th:text="'Số tiền: ' + ${amount} + ' VND'"></p>
+    <button onclick="pay(true)">Thanh toán Thành công</button>
+    <button onclick="pay(false)">Thanh toán Thất bại</button>
+    
+    <script>
+        function pay(isSuccess) {
+            fetch('/mock/confirm', {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify({ token: '[[${token}]]', success: isSuccess })
+            }).then(() => alert('Đã gửi Webhook!'));
+        }
+    </script>
+</body>
+</html>
