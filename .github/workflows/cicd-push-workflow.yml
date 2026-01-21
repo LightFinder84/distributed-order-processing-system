@@ -61,6 +61,6 @@ jobs:
           sed -i "s/\${DOCKER_USERNAME}/${{ secrets.DOCKER_USERNAME }}/g" ./aws/order-service/order-service.yaml
           sed -i "s/\${IMAGE_TAG}/${{ github.sha }}/g" ./aws/order-service/order-service.yaml
           
-          kubectl apply -f ./aws/order-service/order-service.yaml
+          kubectl apply -f ./aws/order-service/order-service.yaml -n order
           sleep 5
-          kubectl rollout status deployment/order-service
+          kubectl rollout status deployment/order-service -n order
