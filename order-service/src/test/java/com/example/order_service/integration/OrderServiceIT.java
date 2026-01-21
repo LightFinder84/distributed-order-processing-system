@@ -2,6 +2,8 @@ package com.example.order_service.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 
 import java.util.List;
 
@@ -13,10 +15,13 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import com.example.order_service.DTO.PlaceOrderRequest;
 import com.example.order_service.DTO.PlaceOrderRequest.OrderItem;
+import com.example.order_service.model.Order;
+import com.example.order_service.model.OrderOutbox;
 import com.example.order_service.repository.OrderItemRepository;
 import com.example.order_service.repository.OrderOutboxRepository;
 import com.example.order_service.repository.OrderRepository;
@@ -100,43 +105,43 @@ public class OrderServiceIT extends BaseIntegration {
         assertEquals(0, orderOutboxRepository.count());
     }
 
-    // @Test
-    // @DisplayName("should not insert any data when failed to insert order")
-    // void shouldNotInsertData_WhenFailedToInsertOrder() {
-    //     // arrange
-    //     OrderItem orderItem = new OrderItem(1L, 2);
-    //     PlaceOrderRequest orderRequest = new PlaceOrderRequest(1L, List.of(orderItem));
+    @Test
+    @DisplayName("should not insert any data when failed to insert order")
+    void shouldNotInsertData_WhenFailedToInsertOrder() {
+        // arrange
+        OrderItem orderItem = new OrderItem(1L, 2);
+        PlaceOrderRequest orderRequest = new PlaceOrderRequest(1L, List.of(orderItem));
 
-    //     doThrow(new DataIntegrityViolationException("duplicate ID")).when(orderRepository).save(any(Order.class));
+        doThrow(new DataIntegrityViolationException("duplicate ID")).when(orderRepository).save(any(Order.class));
 
-    //     // act & assert
-    //     assertThrows(DataIntegrityViolationException.class, () -> {
-    //         orderService.placeOrder(orderRequest);
-    //     });
+        // act & assert
+        assertThrows(DataIntegrityViolationException.class, () -> {
+            orderService.placeOrder(orderRequest);
+        });
 
-    //     // assert
-    //     assertEquals(0, orderRepository.count());
-    //     assertEquals(0, orderItemRepository.count());
-    //     assertEquals(0, orderOutboxRepository.count());
-    // }
+        // assert
+        assertEquals(0, orderRepository.count());
+        assertEquals(0, orderItemRepository.count());
+        assertEquals(0, orderOutboxRepository.count());
+    }
 
-    // @Test
-    // @DisplayName("should not insert any data when failed to insert outbox")
-    // void shouldNotInsertData_WhenFailedToInsertOutbox() {
-    //     // arrange
-    //     OrderItem orderItem = new OrderItem(1L, 2);
-    //     PlaceOrderRequest orderRequest = new PlaceOrderRequest(1L, List.of(orderItem));
+    @Test
+    @DisplayName("should not insert any data when failed to insert outbox")
+    void shouldNotInsertData_WhenFailedToInsertOutbox() {
+        // arrange
+        OrderItem orderItem = new OrderItem(1L, 2);
+        PlaceOrderRequest orderRequest = new PlaceOrderRequest(1L, List.of(orderItem));
 
-    //     doThrow(new DataIntegrityViolationException("duplicate ID")).when(orderOutboxRepository).save(any(OrderOutbox.class));
+        doThrow(new DataIntegrityViolationException("duplicate ID")).when(orderOutboxRepository).save(any(OrderOutbox.class));
 
-    //     // act & assert
-    //     assertThrows(DataIntegrityViolationException.class, () -> {
-    //         orderService.placeOrder(orderRequest);
-    //     });
+        // act & assert
+        assertThrows(DataIntegrityViolationException.class, () -> {
+            orderService.placeOrder(orderRequest);
+        });
 
-    //     // assert
-    //     assertEquals(0, orderRepository.count());
-    //     assertEquals(0, orderItemRepository.count());
-    //     assertEquals(0, orderOutboxRepository.count());
-    // }
+        // assert
+        assertEquals(0, orderRepository.count());
+        assertEquals(0, orderItemRepository.count());
+        assertEquals(0, orderOutboxRepository.count());
+    }
 }

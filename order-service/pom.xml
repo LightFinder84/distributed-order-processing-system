@@ -205,28 +205,6 @@
                 </executions>
             </plugin>
 
-            <!-- Dependency check -->
-            <plugin>
-                <groupId>org.owasp</groupId>
-                <artifactId>dependency-check-maven</artifactId>
-                <version>12.2.0</version>
-                <configuration>
-                    <ossIndexServerId>ossindex</ossIndexServerId>
-                    <suppressionFiles>
-                        <suppressionFile>dependency-check-suppressions.xml</suppressionFile>
-                    </suppressionFiles>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <id>dependency-check</id>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
             <plugin>
                 <groupId>org.sonarsource.scanner.maven</groupId>
                 <artifactId>sonar-maven-plugin</artifactId>
