@@ -8,8 +8,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/")
 public class HomeController {
 
+    /**
+     * Application's health check endpoint.
+     *
+     * @return a verification message
+     */
     @GetMapping
-    public String hello() {
+    public final String hello() {
         return "It's working.";
     }
 }

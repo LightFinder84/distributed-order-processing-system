@@ -23,23 +23,39 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderItem {
-    
+
+    /**
+     * Unique identifier for Order item.
+     * This is a composite identifier (order_id, product_id).
+     */
     @EmbeddedId
     private OrderItemId id;
 
+    /**
+     * Referenced order object (from column "order_id").
+     */
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @MapsId("orderId")
     @JoinColumn(name = "order_id")
     private Order order;
 
+    /**
+     * Referenced product object (from column "product_id").
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("productId")
     @JoinColumn(name = "product_id")
     private Product product;
 
+    /**
+     * Price of product at purchase time.
+     */
     @Column(name = "price_at_purchase", nullable = false)
     private BigDecimal priceAtPurchase;
 
+    /**
+     * Quantity of current item in the order.
+     */
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 }

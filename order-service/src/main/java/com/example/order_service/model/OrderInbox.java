@@ -28,34 +28,58 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OrderInbox {
 
+    /**
+     * Unique idientifier for order inbox.
+     */
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
+    /**
+     * Order's unique transaction ID.
+     */
     @Column(name = "transaction_id", nullable = false)
     private UUID transactionId;
 
+    /**
+     * Incoming event type.
+     */
     @Column(name = "event_type", nullable = false)
     private Type type;
 
+    /**
+     * Event processing status.
+     */
     @Column(name = "status", nullable = false)
     @Builder.Default
     private String status = "pending";
 
+    /**
+     * Event payload.
+     */
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "payload", nullable = false, columnDefinition = "jsonb")
     private Event payload;
 
+    /**
+     * Created time.
+     */
     @Column(name = "created_at", nullable = false)
     @Builder.Default
     private OffsetDateTime createdAt = OffsetDateTime.now();
 
-    public void markAsSkipped() {
+    /**
+     * Mark event as "skipped".
+     */
+    public final void markAsSkipped() {
         this.status = "skipped";
     }
 
-    public void markAsProcessed() {
+    /**
+     * Mark event as "processed".
+     */
+    public final void markAsProcessed() {
         this.status = "processed";
     }
 }

@@ -10,7 +10,12 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @Configuration
 public class ApplicationConfig {
-    
+
+    /**
+     * Automatically called by Spring, explicit call is not allowed.
+     *
+     * @return mapper object
+     */
     @Bean
     public ObjectMapper customObjectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
