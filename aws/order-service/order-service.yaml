@@ -75,7 +75,7 @@ spec:
     spec:
       containers:
       - name: order-service-container
-        image: antony2907/order-service:1.0.1
+        image: ${DOCKER_USERNAME}/order-service:${IMAGE_TAG}
         ports:
         - containerPort: 8080
         env:
