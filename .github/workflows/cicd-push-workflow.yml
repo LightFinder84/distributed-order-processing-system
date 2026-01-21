@@ -17,6 +17,7 @@ jobs:
           ./mvnw clean install
 
   Build-And-Push:
+    needs: Test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository code
@@ -43,6 +44,7 @@ jobs:
           cache-to: type=gha,mode=max
   
   Deploy:
+    needs: Build-And-Push
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
