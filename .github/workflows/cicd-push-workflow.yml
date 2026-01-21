@@ -1,0 +1,17 @@
+name: CI/CD Workflow for order service
+on:
+  push:
+    paths:
+      - 'order-service/**'
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v5
+      - name: Verify
+        working-directory: './order-service'
+        run: mvnw verify
+      - name: finish
+        run: echo "finish first sample flow for order service"
+      - run: pwd
