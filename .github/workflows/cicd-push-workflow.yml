@@ -1,4 +1,4 @@
-name: CI/CD Workflow for order service
+name: CI/CD Push Workflow for order service
 on:
   push:
     paths:
