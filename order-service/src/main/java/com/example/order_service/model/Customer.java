@@ -14,19 +14,32 @@ import lombok.Setter;
 @Setter
 @Table(name = "customers")
 public class Customer {
-    
+
+    /**
+     * Unique identifier for the customer.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "customer_id")
     private Long customerId;
 
+    /**
+     * Customer fullname.
+     */
     @Column(name = "customer_name", nullable = false)
     private String customerName;
 
+    /**
+     * Default constructor required by JPA.
+     */
     public Customer() {
     }
 
-    public Customer(String customerName) {
+    /**
+     * Constructs a new Customer with a specified name.
+     * @param customerName
+     */
+    public Customer(final String customerName) {
         this.customerName = customerName;
     }
 }

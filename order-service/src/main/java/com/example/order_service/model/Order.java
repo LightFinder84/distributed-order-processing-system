@@ -22,6 +22,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -31,29 +32,58 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Order {
 
+    /**
+     * Unique identifier for Order.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
     private Long orderId;
 
+    /**
+     * Unique transaction ID for each Order.
+     */
     @Column(name = "transaction_id", unique = true, nullable = false)
     private UUID transactionId;
 
+    /**
+     * Order status.
+     */
     @Column(name = "status", nullable = false)
     @Builder.Default
     private String status = "pending";
 
+    /**
+     * Customer reference object.
+     * Referenced by column "customer_id".
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
+    /**
+     * Created time.
+     */
     @Column(name = "created_at", nullable = false)
     private final OffsetDateTime createdAt = OffsetDateTime.now();
 
+    /**
+     * Order item list.
+     */
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Setter
     private List<OrderItem> items;
 
-    public static Order create(Customer customer, PlaceOrderRequest orderRequest, Map<Long, Product> productMap) {
+    /**
+     * Create Order entity.
+     *
+     * @param customer
+     * @param orderRequest
+     * @param productMap
+     * @return Order entity
+     */
+    public static Order create(final Customer customer, final PlaceOrderRequest orderRequest,
+            final Map<Long, Product> productMap) {
         Order order = Order.builder().customer(customer).transactionId(UUID.randomUUID()).build();
 
         List<OrderItem> orderItems = orderRequest.items().stream().map(requestItem -> {
@@ -72,15 +102,17 @@ public class Order {
         return order;
     }
 
-    public void markAsCancelled() {
+    /**
+     * Update order status as "cancelled".
+     */
+    public final void markAsCancelled() {
         this.status = "cancelled";
     }
 
-    public void markAsCompleted() {
+    /**
+     * Update order status as "completed".
+     */
+    public final void markAsCompleted() {
         this.status = "completed";
-    }
-
-    public void setItems(List<OrderItem> items) {
-        this.items = items;
     }
 }

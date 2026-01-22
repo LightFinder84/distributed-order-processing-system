@@ -2,6 +2,7 @@
 FROM maven:3.9.12-amazoncorretto-17-debian AS build
 WORKDIR /app
 COPY pom.xml .
+COPY sun_checks-9.3.xml .
 COPY src ./src
 RUN mvn clean package -DskipTests
 

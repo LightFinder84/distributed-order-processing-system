@@ -1,0 +1,66 @@
+name: CI/CD Push Workflow for order service
+on:
+  push:
+    paths:
+      - 'order-service/**'
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v5
+
+      - name: Verify
+        working-directory: './order-service'
+        run: |
+          chmod +x mvnw
+          ./mvnw clean install
+
+  Build-And-Push:
+    needs: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v5
+
+      - name: Login Dockerhub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and Push Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./order-service
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/order-service:latest
+            ${{ secrets.DOCKER_USERNAME }}/order-service:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+  
+  Deploy:
+    needs: Build-And-Push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup kubectl
+        uses: azure/k8s-set-context@v3
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBE_CONFIG_DATA }}
+
+      - name: Change tag and deploy
+        run: |
+          sed -i "s/\${DOCKER_USERNAME}/${{ secrets.DOCKER_USERNAME }}/g" ./aws/order-service/order-service.yaml
+          sed -i "s/\${IMAGE_TAG}/${{ github.sha }}/g" ./aws/order-service/order-service.yaml
+          
+          kubectl apply -f ./aws/order-service/order-service.yaml -n order
+          sleep 5
+          kubectl rollout status deployment/order-service -n order

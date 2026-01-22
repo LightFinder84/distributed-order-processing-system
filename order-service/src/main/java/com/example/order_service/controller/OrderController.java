@@ -18,11 +18,21 @@ import jakarta.validation.Valid;
 @RequestMapping(path = "/v1/order")
 public class OrderController {
 
+    /**
+     * Service for processing order placement.
+     */
     @Autowired
     private OrderService orderService;
 
+    /**
+     * Place order endpoint.
+     *
+     * @param orderRequest
+     * @return Http response entity.
+     */
     @PostMapping
-    public ResponseEntity<PlaceOrderResponse> placeOrder(@Valid @RequestBody PlaceOrderRequest orderRequest) {
+    public final ResponseEntity<PlaceOrderResponse> placeOrder(
+            @Valid @RequestBody final PlaceOrderRequest orderRequest) {
 
         PlaceOrderResponse orderResponse = orderService.placeOrder(orderRequest);
 

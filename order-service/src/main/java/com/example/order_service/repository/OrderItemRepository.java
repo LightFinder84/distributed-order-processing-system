@@ -8,5 +8,4 @@ import com.example.order_service.model.OrderItemId;
 
 @Repository
 public interface OrderItemRepository extends JpaRepository<OrderItem, OrderItemId> {
-    
 }

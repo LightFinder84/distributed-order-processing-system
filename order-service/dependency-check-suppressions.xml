@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+    <!-- Cách 2: Chặn theo GAV (GroupId, ArtifactId, Version) nếu cách 1 vẫn sót -->
+    <suppress>
+        <notes><![CDATA[
+   file name: lz4-java-1.8.0.jar
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.lz4/lz4-java@.*$</packageUrl>
+        <vulnerabilityName>CVE-2025-12183</vulnerabilityName>
+    </suppress>
+
+    <suppress>
+        <notes><![CDATA[
+   file name: lz4-java-1.8.0.jar
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.lz4/lz4-java@.*$</packageUrl>
+        <vulnerabilityName>CVE-2025-66566</vulnerabilityName>
+    </suppress>
+</suppressions>

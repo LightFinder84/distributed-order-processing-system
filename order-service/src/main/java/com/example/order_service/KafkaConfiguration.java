@@ -7,7 +7,14 @@ import org.springframework.kafka.support.converter.RecordMessageConverter;
 
 @Configuration
 public class KafkaConfiguration {
-    
+
+    /**
+     * Kafka jackson message converter.
+     *
+     * Automatically called by spring.
+     *
+     * @return Message converter from jackson.
+     */
     @Bean
     public RecordMessageConverter converter() {
         return new JacksonJsonMessageConverter();

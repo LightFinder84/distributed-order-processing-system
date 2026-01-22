@@ -14,8 +14,18 @@ import jakarta.persistence.EntityNotFoundException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    /**
+     * Automatically called by spring, explicit call is not allowed.
+     *
+     * @param ex Exception is throwed when the argument with @Valid is not valid by
+     *           it's definition.
+     * @return Http response object
+     *
+     * @see OrderController#placeOrder for argument types.
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public final ResponseEntity<Map<String, String>> handleValidationExceptions(
+            final MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getFieldErrors()
                 .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
@@ -23,8 +33,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Automatically called by spring, explicit call is not allowed.
+     *
+     * @param ex Exception is throwed when a database entity is not found.
+     * @return Http response object.
+     */
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleEntityNotFoundException(EntityNotFoundException ex) {
+    public final ResponseEntity<Map<String, String>> handleEntityNotFoundException(final EntityNotFoundException ex) {
         Map<String, String> errors = new HashMap<>();
         errors.put("error", ex.getMessage());
 
