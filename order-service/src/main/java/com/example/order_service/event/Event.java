@@ -86,7 +86,7 @@ public record Event(
      * @throws NullPointerException if any of the fields are null
      */
     public Event {
-        items = List.copyOf(items);
+        items = (items == null) ? List.of() : List.copyOf(items);
     }
 
     /**
